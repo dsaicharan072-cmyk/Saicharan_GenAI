@@ -172,14 +172,23 @@ async def chat_endpoint(request: ChatRequest):
     Accepts session_id and message.
     Returns JSON dictionary with bot_reply (str) and character_break_risk (float 0-1).
     """
-    try:
-        result = await agent_with_memory.ainvoke(
-            {"message": request.message},
-            config={"configurable": {"session_id": request.session_id}}
-        )
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    import asyncio
+    last_error = None
+    for attempt in range(4):
+        try:
+            result = await agent_with_memory.ainvoke(
+                {"message": request.message},
+                config={"configurable": {"session_id": request.session_id}}
+            )
+            return result
+        except Exception as e:
+            last_error = e
+            err_str = str(e)
+            if any(k in err_str for k in ["503", "UNAVAILABLE", "high demand", "ResourceExhausted", "429"]):
+                await asyncio.sleep(1.5 * (attempt + 1))
+                continue
+            raise HTTPException(status_code=500, detail=err_str)
+    raise HTTPException(status_code=503, detail=f"Service temporarily busy, please retry: {last_error}")
 
 
 if __name__ == "__main__":
