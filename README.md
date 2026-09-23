@@ -43,8 +43,10 @@ A production-ready FastAPI service powered by LangChain and Google Gemini (`gemi
    python bot_api.py
    ```
 
-4. **Interactive API Docs (Swagger UI)**:
-   Navigate to: [http://localhost:8000/docs](http://localhost:8000/docs)
+4. **Interactive Interfaces**:
+   - **Web UI (Hell's Kitchen Live Dashboard)**: Open [http://localhost:8000](http://localhost:8000)
+     - Features: Live **Idiot Sandwich Meter**, 1-click Vibe Check Trials, session isolation manager, and structured JSON inspector drawer.
+   - **Swagger UI**: Open [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ---
 

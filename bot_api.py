@@ -1,7 +1,10 @@
 import os
 import json
+import pathlib
 import uvicorn
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 
@@ -22,6 +25,15 @@ app = FastAPI(
     description="Furious, curses cleanly, demands Michelin-star algorithmic perfection, and calls out idiot sandwiches.",
     version="1.0.0",
 )
+
+# Mount static files directory
+STATIC_DIR = pathlib.Path(__file__).parent / "static"
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+@app.get("/", response_class=FileResponse)
+async def serve_ui():
+    """Serve the interactive Hell's Kitchen UI."""
+    return FileResponse(str(STATIC_DIR / "index.html"))
 
 # ==========================================
 # 1. SCHEMAS
